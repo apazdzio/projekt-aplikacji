@@ -1,9 +1,10 @@
 package com.crud.tasks.controller;
 
 import com.crud.tasks.domain.TaskDto;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.crud.tasks.mapper.TaskMapper;
+import com.crud.tasks.service.DbService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,26 +13,31 @@ import java.util.List;
 @RequestMapping("/v1/task")
 public class TaskController {
 
-    @RequestMapping(method = RequestMethod.GET, value = "getTasks")
+    @Autowired
+    private DbService service;
+    @Autowired
+    private TaskMapper taskMapper;
+
+    @GetMapping(value = "getTasks")
     public List<TaskDto> getTasks(){
-        return new ArrayList<>();
+        return taskMapper.mapToTaskDtoList(service.getAllTasks());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "getTask")
-    public TaskDto getTask(String taskId){
-        return new TaskDto((long)1, "test title", "test_content");
+    @GetMapping(value = "getTask/{taskId}")
+    public TaskDto getTask(@PathVariable Long taskId){
+        return taskMapper.mapToTaskDto(service.getTaskById(taskId));
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "deleteTask")
-    public void deleteTask(String taskId){
+    @DeleteMapping(value = "deleteTask/{taskId}")
+    public void deleteTask(@PathVariable String taskId){
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "updateTask")
+    @PutMapping(value = "updateTask")
     public TaskDto updateTask(TaskDto taskDto){
         return new TaskDto((long)1, "Edited test title", "test content");
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "createTask")
+    @PostMapping(value = "createTask")
     public void createTask(TaskDto taskDto){
     }
 }
