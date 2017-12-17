@@ -1,7 +1,9 @@
 package com.crud.tasks.controller;
 
+import com.crud.tasks.domain.Task;
 import com.crud.tasks.domain.TaskDto;
 import com.crud.tasks.mapper.TaskMapper;
+import com.crud.tasks.repository.TaskRepository;
 import com.crud.tasks.service.DbService;
 import com.google.gson.Gson;
 import org.junit.Test;
@@ -15,9 +17,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.is;;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,6 +41,8 @@ public class TaskControllerTest {
     private DbService service;
     @MockBean
     private TaskMapper taskMapper;
+    @MockBean
+    private TaskRepository repository;
 
     @Test
     public void shouldFetchAllTasks() throws Exception {
@@ -52,8 +60,11 @@ public class TaskControllerTest {
     @Test
     public void shouldFetchOneTask() throws Exception {
         //Given
+        Task task = new Task();
+        Optional<Task> optionalTask = Optional.of(task);
         TaskDto taskDto = new TaskDto((long)1, "Task1", "First task");
-        when(taskMapper.mapToTaskDto(service.getTask((long)1).orElseThrow(TaskNotFoundException::new))).thenReturn(taskDto);
+        when(service.getTask(anyLong())).thenReturn(optionalTask);
+        when(taskMapper.mapToTaskDto(task)).thenReturn(taskDto);
         // When & Then
         mockMvc.perform(get("/v1/task/getTask?taskId=1").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200))

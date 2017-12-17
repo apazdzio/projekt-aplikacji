@@ -10,6 +10,7 @@ import com.crud.tasks.trello.client.created.CreatedTrelloCardDto;
 import com.crud.tasks.trello.validator.TrelloValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
